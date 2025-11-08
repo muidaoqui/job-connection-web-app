@@ -49,7 +49,7 @@ function Home() {
   const jobImages = [j1, j2, j3, j4, j5];
 
   return (
-    <div className="w-full  mt-30 ">
+    <div className="w-full ">
       <div className="w-full my-4 relative">
         <Slider {...sliderSettings}>
           {jobImages.map((img, idx) => (
@@ -91,7 +91,7 @@ function Home() {
             </button>
         </div>
       </div>
-      <div className="flex flex-col gap-2 my-4 px-10">
+      <div className="flex flex-col gap-2 my-4 px-10 min-h-screen">
         <h1 className="text-3xl text-blue-600 font-bold ml-10">
             CÔNG VIỆC HOT HÔM NAY
         </h1>
@@ -103,7 +103,7 @@ function Home() {
             SAU NÀY SẼ GỌI API HIỂN THỊ CÔNG VIỆC HOT
         </div>
       </div>
-      <div className="flex flex-col gap-2 my-4 px-10">
+      <div className="flex flex-col gap-2 my-4 px-10 min-h-screen">
         <h1 className="text-3xl text-blue-600 font-bold ml-10">
             CÔNG TY NỔI BẬT
         </h1>
@@ -112,7 +112,7 @@ function Home() {
             SAU NÀY SẼ GỌI API HIỂN THỊ CÔNG TY NỔI BẬT
         </div>
       </div>
-      <div className="flex flex-col gap-2 my-4 px-10 bg-blue-100">
+      <div className="flex flex-col gap-2 my-4 px-10 bg-blue-100 min-h-screen py-10">
         <h1 className="text-3xl text-blue-600 font-bold ml-10">
             CÁC CÔNG TY PHỔ BIẾN
         </h1>
