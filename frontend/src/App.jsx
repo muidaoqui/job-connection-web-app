@@ -1,14 +1,22 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
+import React from "react";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import CustomerLayout from "./components/customer/CustomerLayout";
+import Home from "./pages/customer/Home";
+
 
 function App() {
 
   return (
-    <div className='bg-red-500 h-screen flex justify-center items-center'>
-      <p className='text-white'>Hello World</p>
-    </div>
-  )
+    <Router>
+      <Routes>
+        <Route path="/" element={<CustomerLayout />}>
+          <Route index element={<Home />} />
+
+
+        </Route>
+      </Routes>
+    </Router>
+  );
 }
 
 export default App
