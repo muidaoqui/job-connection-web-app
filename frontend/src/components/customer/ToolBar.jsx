@@ -1,13 +1,29 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { SearchOutlined } from "@ant-design/icons";
 import logo from "../../assets/logo.png";
 
 function ToolBar() {
   const navigate = useNavigate();
+  const [user, setUser] = useState(null);
+
+  // Kiểm tra trạng thái đăng nhập khi component mount
+  useEffect(() => {
+    const storedUser = localStorage.getItem("user");
+    if (storedUser) {
+      setUser(JSON.parse(storedUser));
+    }
+  }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    setUser(null);
+    navigate("/login");
+  };
 
   return (
-    <div className="fixed top-0 left-0 w-full z-50 bg-white  flex flex-col items-center ">
+    <div className="fixed top-0 left-0 w-full z-50 bg-white flex flex-col items-center">
       {/* Thanh điều hướng dạng tai thỏ */}
       <div className="relative w-full flex justify-between items-center px-8 py-4 rounded-b-[60px] shadow-sm bg-gradient-to-r from-blue-500 to-blue-700">
         <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white rounded-full shadow-lg p-2 w-48 h-24 flex justify-center items-center mt-20">
@@ -33,12 +49,24 @@ function ToolBar() {
           <Link to="/contact" className="hover:text-yellow-300 transition">
             0123456789
           </Link>
-          <button
-            onClick={() => navigate("/login")}
-            className="hover:text-yellow-300 transition"
-          >
-            Đăng nhập
-          </button>
+
+          {/* Hiển thị nút đăng nhập hoặc đăng xuất */}
+          {user ? (
+            <button
+              onClick={handleLogout}
+              className="hover:text-yellow-300 transition"
+            >
+              Đăng xuất
+            </button>
+          ) : (
+            <button
+              onClick={() => navigate("/login")}
+              className="hover:text-yellow-300 transition"
+            >
+              Đăng nhập
+            </button>
+          )}
+
           <span className="cursor-pointer hover:text-yellow-300 transition">
             VI | EN
           </span>

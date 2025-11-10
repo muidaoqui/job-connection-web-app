@@ -3,9 +3,10 @@ import { Link, useNavigate } from "react-router-dom";
 import { FaRegEye } from "react-icons/fa";
 import logo from "../assets/logo.png";
 import axios from "axios";
+import { toast } from "react-toastify";
 
 function Login() {
-  const BASE_URL = "http://localhost:5000";
+  const BASE_URL = "http://localhost:8080";
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -23,28 +24,58 @@ function Login() {
     setLoading(true);
 
     try {
-      // 1. Gọi API login
-      const res = await axios.post(`${BASE_URL}/api/users/login`, {
+      const res = await axios.post(`${BASE_URL}/api/auth/login`, {
         email,
         password,
       });
 
-      const { accessToken, refreshToken, user } = res.data;
-      if (!accessToken || !refreshToken || !user) {
-        setError("Không nhận được dữ liệu hợp lệ từ server");
+      const { user, message } = res.data;
+
+      // Nếu user undefined, hiện thông báo và return
+      if (!user) {
+        toast.error(message || "Đăng nhập thất bại");
+        setError(message || "Đăng nhập thất bại");
+        setLoading(false);
         return;
       }
 
-      // 2. Lưu Redux + localStorage
-      dispatch(loginSuccess({ accessToken, refreshToken, user }));
-      localStorage.setItem("accessToken", accessToken);
-      localStorage.setItem("refreshToken", refreshToken);
+      // Kiểm tra email đã được xác thực chưa
+      if (!user.emailVerified) {
+        // Gửi lại mã OTP
+        await axios.post(`${BASE_URL}/api/auth/send-otp`, { email });
+
+        toast.warning(
+          "Email chưa được xác thực. Vui lòng kiểm tra email để lấy mã OTP!"
+        );
+        navigate("/register", {
+          state: {
+            email,
+            needVerification: true,
+          },
+        });
+        setLoading(false);
+        return;
+      }
+
+      // Lưu thông tin user vào localStorage
       localStorage.setItem("user", JSON.stringify(user));
 
-      // 3. Điều hướng SAU khi Redux đã có user
-      navigate("/profile"); 
+      toast.success("Đăng nhập thành công!");
+
+      // Điều hướng dựa vào role
+      switch (user.role) {
+        case "admin":
+          navigate("/admin/dashboard");
+          break;
+        case "recruiter":
+          navigate("/recruiter/dashboard");
+          break;
+        default:
+          navigate("/"); // Trang chủ cho candidate
+      }
     } catch (err) {
       console.error("Login error:", err);
+      toast.error(err.response?.data?.message || "Đăng nhập thất bại");
       setError(err.response?.data?.message || "Đăng nhập thất bại");
     } finally {
       setLoading(false);
@@ -58,7 +89,7 @@ function Login() {
         <div className="bg-gradient-to-br from-purple-200 to-cyan-200 flex flex-col justify-center items-center p-6 md:p-10 text-cyan-700 md:rounded-l-xl">
           <img src={logo} alt="Logo" className="w-auto h-40 rounded-xl mb-4" />
           <p className="text-center mt-10">
-            Giải pháp web tối ưu cho doanh nghiệp
+            Giải pháp tìm việc nhanh chóng và hiệu quả cho bạn!
           </p>
         </div>
 
